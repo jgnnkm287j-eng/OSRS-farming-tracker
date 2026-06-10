@@ -1,169 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OSRS Farm Command Center</title>
-<style>
-body{background:#2b2620;color:#f3e7b3;font-family:Verdana,sans-serif;max-width:1200px;margin:auto;padding:20px}
-.card{background:#3a332b;border:2px solid #8b6f3d;border-radius:10px;padding:15px;margin:12px 0}
-h1,h2{color:#ffd86b}
-button{background:#5a4726;color:white;border:none;padding:10px 14px;margin:4px;border-radius:6px;cursor:pointer}
-input{padding:8px}
-table{width:100%;border-collapse:collapse}
-td,th{border:1px solid #666;padding:6px}
-.timer{padding:10px;border-top:1px solid #666}
-.ready{color:#7CFC00;font-weight:bold}
-.small{opacity:.8;font-size:.9em}
-</style>
-</head>
-<body>
+I've generated a new **index.html** for you:
 
-<h1>🌿 OSRS Farm Command Center</h1>
+**[Download index.html](sandbox:/mnt/data/index.html)**
 
-<div class="card">
-<h2>Farming Planner</h2>
-<input type="number" id="level" value="1" min="1" max="99">
-<button onclick="showCrops()">Show Available Crops</button>
-<div id="cropList"></div>
-</div>
+This version includes:
 
-<div class="card">
-<h2>Quick Start Runs</h2>
-<button onclick="startRun('Herb Run',80)">🌿 Herb Run</button>
-<button onclick="startRun('Watermelon Run',80)">🍉 Watermelon Run</button>
-<button onclick="startRun('Snape Grass Run',70)">🌾 Snape Grass Run</button>
-<button onclick="startRun('Seaweed Run',40)">🌊 Seaweed Run</button>
-<button onclick="startRun('Birdhouse Run',50)">🐦 Birdhouse Run</button>
-</div>
+* Categories:
 
-<div class="card">
-<h2>Next Harvest</h2>
-<div id="nextHarvest">No active timers.</div>
-</div>
+  * Allotments
+  * Herbs
+  * Trees
+  * Fruit Trees
+  * Hardwood Trees
+  * Bushes
+  * Special
+* Sorted by Farming level within each category
+* Farming level input
+* Shows ✓ Available / 🔒 Locked
+* Category filter dropdown
+* Search box
+* Requirements column
+* Saves your Farming level
 
-<div class="card">
-<h2>Active Timers</h2>
-<div id="timers"></div>
-</div>
+For a future version, I'd recommend adding:
 
-<script>
-const crops=[
-["Potato",1,"Potato seed"],
-["Onion",5,"Onion seed"],
-["Cabbage",7,"Cabbage seed"],
-["Tomato",12,"Tomato seed"],
-["Sweetcorn",20,"Sweetcorn seed"],
-["Strawberry",31,"Strawberry seed"],
-["Watermelon",47,"Watermelon seed"],
-["Snape Grass",61,"Snape grass seed"],
-["Ranarr",32,"Ranarr seed + dibber + ultracompost"],
-["Snapdragon",62,"Snapdragon seed + dibber + ultracompost"],
-["Cadantine",67,"Cadantine seed + dibber + ultracompost"],
-["Lantadyme",73,"Lantadyme seed + dibber + ultracompost"],
-["Dwarf Weed",79,"Dwarf weed seed + dibber + ultracompost"],
-["Torstol",85,"Torstol seed + dibber + ultracompost"]
-];
+* Hops
+* Flowers
+* Belladonna
+* Mushroom
+* Spirit Trees
+* Crystal Tree
+* Hespori
+* Farming Contracts
+* XP per crop
+* Protection payments
+* Growth times
+* Profit estimates from GE prices
+* Patch locations for each crop
 
-function showCrops(){
- let lvl=parseInt(document.getElementById('level').value||1);
- let html="<table><tr><th>Crop</th><th>Lvl</th><th>Requirements</th></tr>";
- crops.forEach(c=>{
-  if(lvl>=c[1]) html+=`<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td></tr>`;
- });
- html+="</table>";
- document.getElementById('cropList').innerHTML=html;
- localStorage.setItem('farmLevel',lvl);
-}
-
-let timers=JSON.parse(localStorage.getItem('osrsTimers')||'[]');
-
-function save(){localStorage.setItem('osrsTimers',JSON.stringify(timers));}
-
-function startRun(name,mins){
- timers.push({
-  name:name,
-  start:Date.now(),
-  end:Date.now()+mins*60000,
-  notified:false
- });
- save();
- render();
-}
-
-function removeTimer(i){
- timers.splice(i,1);
- save();
- render();
-}
-
-function render(){
- const container=document.getElementById('timers');
- container.innerHTML='';
-
- let next=null;
-
- timers.forEach((t,i)=>{
-  let remain=Math.max(0,t.end-Date.now());
-
-  if(!next || remain < next.remain){
-    next={name:t.name,remain};
-  }
-
-  if(remain===0 && !t.notified){
-    t.notified=true;
-
-    if("Notification" in window){
-      Notification.requestPermission().then(p=>{
-        if(p==="granted"){
-          new Notification("OSRS Farm Alert",{
-            body:t.name+" is ready!"
-          });
-        }
-      });
-    }
-
-    try{
-      let ctx=new (window.AudioContext||window.webkitAudioContext)();
-      let osc=ctx.createOscillator();
-      osc.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime+0.3);
-    }catch(e){}
-  }
-
-  let h=Math.floor(remain/3600000);
-  let m=Math.floor((remain%3600000)/60000);
-  let s=Math.floor((remain%60000)/1000);
-
-  container.innerHTML += `
-  <div class="timer">
-   <h3>${t.name}</h3>
-   <div class="${remain===0?'ready':''}">
-     ${remain===0 ? 'READY TO HARVEST' : `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`}
-   </div>
-   <div class="small">Ready at ${new Date(t.end).toLocaleTimeString()}</div>
-   <button onclick="removeTimer(${i})">Harvested</button>
-  </div>`;
- });
-
- if(next){
-   let h=Math.floor(next.remain/3600000);
-   let m=Math.floor((next.remain%3600000)/60000);
-   let s=Math.floor((next.remain%60000)/1000);
-   document.getElementById('nextHarvest').innerHTML=`<b>${next.name}</b><br>${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
- } else {
-   document.getElementById('nextHarvest').innerHTML="No active timers.";
- }
-
- save();
-}
-
-document.getElementById('level').value=localStorage.getItem('farmLevel')||1;
-showCrops();
-render();
-setInterval(render,1000);
-</script>
-
-</body>
-</html>
+That would make it a nearly complete OSRS Farming Companion.
