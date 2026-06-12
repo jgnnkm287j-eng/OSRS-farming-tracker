@@ -117,7 +117,7 @@ function showCrops(){
    if(items.length===0) return;
 
    html += `<h3>${cat}</h3>`;
-   html += '<table><tr><th>Crop</th><th>Level</th><th>Status</th><th>Requirements</th><th>Ironman Source</th></tr>';
+   html += '<table><tr><th>Crop</th><th>Level</th><th>Status</th><th>Requirements</th>';
 
    items.forEach(item=>{
       const unlocked=lvl>=item.level;
