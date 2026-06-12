@@ -44,10 +44,6 @@ th{background:#4a4033}
 
 <script>
 const crops = [
-{category:"Trees",name:"Maple",level:45,req:"Maple sapling",source:"Birdhouse nests, Farming Contracts",payment:"1 Basket of oranges",paymentSource:"Buy oranges from Gnome Stronghold food shop"},
-{category:"Fruit Trees",name:"Pineapple",level:51,req:"Pineapple sapling",source:"Birdhouse nests, Farming Contracts",payment:"10 Watermelons",paymentSource:"Grow watermelons"},
-{category:"Hardwood Trees",name:"Teak",level:35,req:"Teak sapling",source:"Birdhouse nests, Farming Contracts",payment:"15 Limpwurt roots",paymentSource:"Grow Limpwurt flowers"},
-
 {category:"Allotments",name:"Potato",level:1,req:"Potato seed"},
 {category:"Allotments",name:"Onion",level:5,req:"Onion seed"},
 {category:"Allotments",name:"Cabbage",level:7,req:"Cabbage seed"},
@@ -121,7 +117,7 @@ function showCrops(){
    if(items.length===0) return;
 
    html += `<h3>${cat}</h3>`;
-   html += '<table><tr><th>Crop</th><th>Level</th><th>Status</th><th>Requirements</th><th>Ironman Source</th><th>Protection Payment</th><th>Payment Source</th></tr>';
+   html += '<table><tr><th>Crop</th><th>Level</th><th>Status</th><th>Requirements</th><th>Ironman Source</th></tr>';
 
    items.forEach(item=>{
       const unlocked=lvl>=item.level;
@@ -129,7 +125,7 @@ function showCrops(){
       <td>${item.name}</td>
       <td>${item.level}</td>
       <td class="${unlocked?'available':'locked'}">${unlocked?'✓ Available':'🔒 Locked'}</td>
-      <td>${item.req}</td><td>${item.source || "-"}</td><td>${item.payment || "-"}</td><td>${item.paymentSource || "-"}</td>
+      <td>${item.req}</td> <td>${item.source}</td>
       </tr>`;
    });
 
